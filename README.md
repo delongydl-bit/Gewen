@@ -29,4 +29,4 @@ npm.cmd start
 npm.cmd run build:dir
 ```
 
-便携版输出到 `dist/Gewen 1.0.0.exe`。
+便携版输出到 `dist/Gewen 1.0.1.exe`。

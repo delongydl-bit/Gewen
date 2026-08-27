@@ -112,7 +112,12 @@ function prepareFaceSwitch(targetScene, donorScene, partNames) {
     const material = Array.isArray(node.material) ? node.material[0] : node.material;
     return material?.name || '';
   };
-  const baseEyes = targets.filter(node => materialName(node).startsWith('Eye_'));
+  const replacesEyes = partNames.some(name => name.startsWith('Eye_'));
+  const replacesMouth = partNames.some(name => name.startsWith('Mouth_'));
+  const baseParts = targets.filter(node => {
+    const name = materialName(node);
+    return (replacesEyes && name.startsWith('Eye_')) || (replacesMouth && name.startsWith('Mouth_'));
+  });
   const playfulParts = donors.filter(node => {
     const name = materialName(node);
     return partNames.includes(name);
@@ -123,7 +128,7 @@ function prepareFaceSwitch(targetScene, donorScene, partNames) {
     part.visible = false;
     skeletonSource.parent.add(part);
   }
-  return { baseEyes, playfulParts, active: false };
+  return { baseParts, playfulParts, active: false };
 }
 
 function prepareDollAccessory(targetScene, donorScene) {
@@ -241,15 +246,16 @@ function setSpecialAccessoryState(name) {
 
 function setFaceExpression(expression) {
   const states = [faceState, surpriseFaceState].filter(Boolean);
+  const allBaseParts = new Set(states.flatMap(state => state.baseParts || []));
+  for (const part of allBaseParts) part.visible = true;
   for (const state of states) {
     state.active = false;
     for (const part of state.playfulParts) part.visible = false;
   }
   const active = expression === 'playful' ? faceState : expression === 'surprise' ? surpriseFaceState : undefined;
-  const baseEyes = states[0]?.baseEyes || [];
-  for (const eye of baseEyes) eye.visible = !active;
   if (active) {
     active.active = true;
+    for (const part of active.baseParts || []) part.visible = false;
     for (const part of active.playfulParts) part.visible = true;
   }
 }
@@ -337,9 +343,6 @@ function playAnimation(name, loop = false) {
   const clip = clips.get(name);
   if (!clip || !mixer) { showSpeech(`未找到动作：${name}`); return; }
   const previousAnimationName = activeAnimationName;
-  // Interact already animates both eyes, the mouth, eyebrows, and head. A
-  // static Playful face card would cover those authored facial keyframes.
-  setFaceExpression(name === 'Greeting' ? 'surprise' : undefined);
   setDollAccessoryVisible(name === 'DollAction' || name === 'DollReturn');
   setDollReturnEffectVisible(name === 'DollReturn');
   if (name === 'DollAction') {
@@ -352,7 +355,16 @@ function playAnimation(name, loop = false) {
     setCharacterVisible(true);
     dollVisibilityPhase = '';
   }
-  setSpecialAccessoryState(name);
+  const faceExpression = name === 'Interact' ? 'playful' : name === 'Greeting' ? 'surprise' : undefined;
+  if (name === 'WandCelebrate' || name === 'DanceIn') {
+    setFaceExpression(undefined);
+    setSpecialAccessoryState(name);
+  } else {
+    setSpecialAccessoryState(name);
+    // Apply face cards last so generic accessory cleanup cannot re-enable the
+    // base eye/mouth meshes over the authored action expression.
+    setFaceExpression(faceExpression);
+  }
   activeAnimationName = name;
   const next = mixer.clipAction(clip);
   next.reset();

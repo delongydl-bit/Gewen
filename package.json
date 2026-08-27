@@ -1,6 +1,6 @@
 {
   "name": "gewen",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Gewen 3D Windows 桌面宠物",
   "author": "MoneyNode",
   "main": "src/main.js",
