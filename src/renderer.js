@@ -60,7 +60,6 @@ let dollAccessoryState;
 let dollReturnScene;
 let dollReturnEffectState;
 let characterParts = [];
-let characterFaceParts = [];
 let dollVisibilityPhase = '';
 let wandCelebrateScene;
 let wandAccessoryState;
@@ -204,10 +203,6 @@ function setCharacterVisible(visible) {
   for (const part of characterParts) part.visible = visible;
 }
 
-function setCharacterFaceVisible(visible) {
-  for (const part of characterFaceParts) part.visible = visible;
-}
-
 function materialNames(node) {
   const materials = Array.isArray(node.material) ? node.material : [node.material];
   return materials.map(material => material?.name || '');
@@ -301,9 +296,6 @@ async function loadModel(index) {
     model = gltf.scene;
     characterParts = [];
     model.traverse(node => { if (node.isMesh) characterParts.push(node); });
-    characterFaceParts = characterParts.filter(part =>
-      materialNames(part).some(name => name.startsWith('Eye_') || name.startsWith('Mouth_'))
-    );
     playfulFaceScene = playfulGltf.scene;
     surpriseFaceScene = surpriseGltf.scene;
     dollActionScene = dollGltf.scene;
@@ -373,7 +365,6 @@ function playAnimation(name, loop = false) {
     // base eye/mouth meshes over the authored action expression.
     setFaceExpression(faceExpression);
   }
-  if (name === 'DollAction') setCharacterFaceVisible(false);
   activeAnimationName = name;
   const next = mixer.clipAction(clip);
   next.reset();
@@ -381,7 +372,7 @@ function playAnimation(name, loop = false) {
   next.setLoop(loop || name === 'Idle_Base' ? THREE.LoopRepeat : THREE.LoopOnce, loop || name === 'Idle_Base' ? Infinity : 1);
   next.clampWhenFinished = !loop && name !== 'Idle_Base';
   const dollTransition = name === 'DollReturn' && previousAnimationName === 'DollAction';
-  const fadeDuration = dollTransition ? 0.06 : 0.18;
+  const fadeDuration = dollTransition ? 0.06 : name === 'DollAction' ? 0.03 : 0.18;
   if (currentAction && currentAction !== next) currentAction.fadeOut(fadeDuration);
   next.fadeIn(fadeDuration).play();
   currentAction = next;
@@ -405,7 +396,7 @@ function animate() {
   requestAnimationFrame(animate);
   const delta = Math.min(clock.getDelta(), 0.05);
   mixer?.update(delta);
-  if (activeAnimationName === 'DollAction' && dollVisibilityPhase === 'transforming-to-doll' && currentAction?.time >= 0.10) {
+  if (activeAnimationName === 'DollAction' && dollVisibilityPhase === 'transforming-to-doll' && currentAction?.time > 0) {
     setCharacterVisible(false);
     dollVisibilityPhase = 'doll-only';
   } else if (activeAnimationName === 'DollReturn' && dollVisibilityPhase === 'returning-from-doll' && currentAction?.time >= 0.42) {
