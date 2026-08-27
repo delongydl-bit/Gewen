@@ -1,0 +1,19 @@
+* { box-sizing: border-box; user-select: none; }
+html, body, #app { width: 100%; height: 100%; margin: 0; overflow: hidden; background: transparent; }
+body { font-family: "Microsoft YaHei UI", sans-serif; }
+#app { position: relative; }
+#stage { position: absolute; inset: 0; width: 100%; height: 100%; cursor: grab; -webkit-app-region: no-drag; }
+#stage:active { cursor: grabbing; }
+.drag-handle { position: absolute; z-index: 20; left: 50%; top: 7px; transform: translateX(-50%); min-width: 92px; padding: 5px 11px; display: flex; justify-content: center; gap: 7px; color: #f7ecff; font-size: 12px; background: rgba(56,35,72,.72); border: 1px solid rgba(219,183,239,.65); border-radius: 14px; cursor: grab; -webkit-app-region: drag; }
+.loading { position: absolute; z-index: 15; left: 50%; top: 48%; transform: translate(-50%,-50%); padding: 8px 12px; color: #fff; background: rgba(45,28,58,.75); border-radius: 12px; font-size: 12px; pointer-events: none; }
+.speech { position: absolute; z-index: 18; left: 14px; top: 45px; max-width: 190px; padding: 8px 10px; opacity: 0; color: #563766; background: rgba(255,250,255,.95); border: 2px solid #d9bce8; border-radius: 13px 13px 4px 13px; font-size: 12px; transform: translateY(5px); transition: .2s; pointer-events: none; }
+.speech.show { opacity: 1; transform: translateY(0); }
+.controls { position: absolute; z-index: 25; right: 9px; bottom: 10px; display: flex; gap: 6px; padding: 5px; background: rgba(247,235,252,.88); border: 1px solid #d5b9e1; border-radius: 13px; -webkit-app-region: no-drag; }
+button { min-height: 32px; padding: 0 10px; color: #5c386c; background: #fffaff; border: 1px solid #cba9da; border-radius: 9px; cursor: pointer; }
+button:hover { color: #fff; background: #8b5ba1; }
+.ui-hidden .drag-handle,
+.ui-hidden .controls,
+.ui-hidden .action-panel { display: none !important; }
+.action-panel { position: absolute; z-index: 24; right: 9px; bottom: 55px; width: 205px; padding: 8px; display: none; grid-template-columns: 1fr 1fr; gap: 5px; background: rgba(250,242,253,.96); border: 1px solid #d1afe0; border-radius: 12px; -webkit-app-region: no-drag; }
+.action-panel.open { display: grid; }
+.action-panel button { min-height: 38px; padding: 4px; font-size: 11px; }

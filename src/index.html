@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Gewen</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="importmap">
+    {"imports":{"three":"./vendor/three.module.js","three/addons/":"./vendor/"}}
+  </script>
+</head>
+<body>
+  <main id="app" class="ui-hidden">
+    <div class="drag-handle" title="拖动桌宠"><span>⋮⋮</span><strong>Gewen</strong></div>
+    <canvas id="stage"></canvas>
+    <div class="loading" id="loading">正在加载 Gewen…</div>
+    <div class="speech" id="speech"></div>
+    <section class="controls">
+      <button id="actionsButton" title="动作列表">动作</button>
+      <button id="modelsButton" title="切换模型">外观 1</button>
+      <button id="menuButton" title="更多菜单">☰</button>
+    </section>
+    <section class="action-panel" id="actionPanel"></section>
+  </main>
+  <script type="module" src="renderer.js"></script>
+</body>
+</html>
