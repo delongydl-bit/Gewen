@@ -425,7 +425,10 @@ function animate() {
 for (const [name, label, shortcut] of actions) {
   const button = document.createElement('button');
   button.textContent = `${label}\n${shortcut}`;
-  button.addEventListener('click', () => { playAnimation(name, ['Dance_Loop', 'Run', 'Idle_Base'].includes(name)); actionPanel.classList.remove('open'); });
+  button.addEventListener('click', () => {
+    playAnimation(name, ['Celebrate', 'WandCelebrate', 'Run', 'Idle_Base'].includes(name));
+    actionPanel.classList.remove('open');
+  });
   actionPanel.appendChild(button);
 }
 

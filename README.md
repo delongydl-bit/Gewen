@@ -7,8 +7,8 @@
 - `Ctrl+Alt+1`：惊讶动作
 - `Ctrl+Alt+2`：互动
 - `Ctrl+Alt+3`：洋娃娃动作（自动变回角色）
-- `Ctrl+Alt+4`：庆祝
-- `Ctrl+Alt+5`：魔法棒庆祝
+- `Ctrl+Alt+4`：循环庆祝舞蹈
+- `Ctrl+Alt+5`：循环魔法棒庆祝
 - `Ctrl+Alt+6`：奔跑
 - `Ctrl+Alt+7`：舞蹈动作（动态切换面部表情）
 - `Ctrl+Alt+0`：恢复待机
@@ -29,4 +29,4 @@ npm.cmd start
 npm.cmd run build:dir
 ```
 
-便携版输出到 `dist/Gewen 1.0.2.exe`。
+便携版输出到 `dist/Gewen 1.0.3.exe`。
