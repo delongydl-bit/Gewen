@@ -473,7 +473,7 @@ function finishDrag(event) {
 canvas.addEventListener('pointerup', finishDrag);
 canvas.addEventListener('pointercancel', finishDrag);
 window.addEventListener('resize', resize);
-window.gewenAPI.onAnimation(payload => { playAnimation(payload.name, payload.loop); showSpeech(payload.label); });
+window.gewenAPI.onAnimation(payload => playAnimation(payload.name, payload.loop));
 window.gewenAPI.onModel(index => loadModel(index));
 window.gewenAPI.onCursor(({ x, y, width, height }) => {
   gaze.x = THREE.MathUtils.clamp((x / width - 0.5) * 2, -1, 1);
