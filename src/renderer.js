@@ -60,6 +60,7 @@ let dollAccessoryState;
 let dollReturnScene;
 let dollReturnEffectState;
 let characterParts = [];
+let characterFaceParts = [];
 let dollVisibilityPhase = '';
 let wandCelebrateScene;
 let wandAccessoryState;
@@ -203,6 +204,10 @@ function setCharacterVisible(visible) {
   for (const part of characterParts) part.visible = visible;
 }
 
+function setCharacterFaceVisible(visible) {
+  for (const part of characterFaceParts) part.visible = visible;
+}
+
 function materialNames(node) {
   const materials = Array.isArray(node.material) ? node.material : [node.material];
   return materials.map(material => material?.name || '');
@@ -295,7 +300,10 @@ async function loadModel(index) {
     if (model) scene.remove(model);
     model = gltf.scene;
     characterParts = [];
-    model.traverse(node => { if (node.isSkinnedMesh) characterParts.push(node); });
+    model.traverse(node => { if (node.isMesh) characterParts.push(node); });
+    characterFaceParts = characterParts.filter(part =>
+      materialNames(part).some(name => name.startsWith('Eye_') || name.startsWith('Mouth_'))
+    );
     playfulFaceScene = playfulGltf.scene;
     surpriseFaceScene = surpriseGltf.scene;
     dollActionScene = dollGltf.scene;
@@ -365,6 +373,7 @@ function playAnimation(name, loop = false) {
     // base eye/mouth meshes over the authored action expression.
     setFaceExpression(faceExpression);
   }
+  if (name === 'DollAction') setCharacterFaceVisible(false);
   activeAnimationName = name;
   const next = mixer.clipAction(clip);
   next.reset();
@@ -396,7 +405,7 @@ function animate() {
   requestAnimationFrame(animate);
   const delta = Math.min(clock.getDelta(), 0.05);
   mixer?.update(delta);
-  if (activeAnimationName === 'DollAction' && dollVisibilityPhase === 'transforming-to-doll' && currentAction?.time >= 0.16) {
+  if (activeAnimationName === 'DollAction' && dollVisibilityPhase === 'transforming-to-doll' && currentAction?.time >= 0.10) {
     setCharacterVisible(false);
     dollVisibilityPhase = 'doll-only';
   } else if (activeAnimationName === 'DollReturn' && dollVisibilityPhase === 'returning-from-doll' && currentAction?.time >= 0.42) {
